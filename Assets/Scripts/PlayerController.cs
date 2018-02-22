@@ -18,12 +18,25 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void FixedUpdate(){
+		#if(UNITY_EDITOR || UNITY_STANDALONE)
 		float moveHorizontal = Input.GetAxis ("Horizontal");
 		float moveVertical = Input.GetAxis ("Vertical");
 		Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
 		rb.AddForce (movement * speed);
+		#elif(UNITY_ANDROID || UNITY_IOS)
+		float moveHorizontal = Input.acceleration.x;
+		float moveVertical = Input.acceleration.y;
+		Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
+		rb.AddForce (movement * speed);
+		#endif
+
 	}
 
+	void Update(){
+		if (Input.GetKey ("escape")) {
+			Application.Quit ();
+		}
+	}
 	void OnTriggerEnter(Collider other){
 		if (other.gameObject.CompareTag ("Pick Up")) {
 			other.gameObject.SetActive (false);
